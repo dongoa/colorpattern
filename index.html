@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PAPERS FIGURE COLOR</title>
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="css/style_user.css"/>
+    <meta name="viewport" content="width=device-width, height=device-height,initial-scale=1.0"/>
+</head>
+<style>
+    rect {
+        /*fill: darkblue;*/
+        opacity: 1;
+        stroke: white;
+    }
+</style>
+<body>
+<header>
+    <!-- nav bar -->
+    <nav>
+        <div class="nav-wrapper">
+            <div class="container">
+                <a href="https://github.com/b-z/photo_recoloring">
+                    <span class="brand-logo">PAPERS FIGURE COLORPATTERN</span>
+                </a>
+                <ul id="nav-mobile" class="right hide-on-small-only">
+                    <!--<li><a href="https://github.com/b-z/photo_recoloring">ZHOU BOWEI</a></li>-->
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- nav bar end -->
+
+</header>
+<div class="container">
+    <!--<a class="waves-effect waves-light btn" style="width:200px;">button</a>-->
+
+
+    <div class="row">
+        <div class="col s1 m5">
+            <div class="card  darken-1" style="height:250px">
+                <div class="card-content white-text">
+                    <span class="card-title" style="color:#546e7a">Authors</span>
+
+                </div>
+                <div id="_A" class="card-action" style="height:160px;overflow-y:hidden;">
+
+                </div>
+            </div>
+            <div class="card  darken-1" style="height:250px">
+                <div class="card-content white-text">
+                    <span class="card-title" style="color:#546e7a">Venues</span>
+
+                </div>
+                <div id="_B" class="card-action">
+
+                </div>
+            </div>
+            <div class="card  darken-1" style="height:250px">
+                <div class="card-content white-text">
+                    <span class="card-title" style="color:#546e7a">Keywords</span>
+
+                </div>
+                <div id="_C" class="card-action" style="height:160px;width:100%;overflow-y:hidden;">
+                    <!--<a href="#">This is a link</a>-->
+                    <!--<a href="#">This is a link</a>-->
+                </div>
+            </div>
+            <div class="card  darken-1" style="height:250px">
+                <div class="card-content white-text">
+                    <span class="card-title" style="color:#546e7a">Topics</span>
+
+                </div>
+                <div id="_D" class="card-action" style="width:100%;height:160px;overflow-y:auto;">
+                    <!--<a href="#">This is a link</a>-->
+                    <!--<a href="#">This is a link</a>-->
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col s2 m7">
+            <div class="card  darken-1" style="height:1045px;overflow-y:auto;">
+                <div id="svg-container" style="background-color: white; width:100%; height:1000px">
+                    <svg style="width:100%;height:100%"></svg>
+                </div>
+                <!--<svg style="background-color: #546e7a; width:100%; height:100%"></svg>-->
+                <!--<div class="card-content white-text">-->
+                <!--<span class="card-title">Card Title</span>-->
+                <!--<p>I am a very simple card. I am good at containing small bits of information.-->
+                <!--I am convenient because I require little markup to use effectively.</p>-->
+                <!--</div>-->
+                <!--<div class="card-action">-->
+                <!--<a href="#">This is a link</a>-->
+                <!--<a href="#">This is a link</a>-->
+                <!--</div>-->
+            </div>
+        </div>
+
+
+    </div>
+
+
+</div>
+<script src="js/d3.min.js"></script>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/ColorData.js"></script>
+
+<script>
+    $('.card-title').on('click', function () {
+        $('.card-action').css('overflow-y', 'auto');
+    });
+    d3.dsv(",", "paperfigures.csv", function (d) {
+        return {
+            d
+            // year: new Date(+d.Year, 0, 1), // convert "Year" column to Date
+            // make: d.Make,
+            // model: d.Model,
+            // length: +d.Length // convert "Length" column to number
+        };
+    }).then(function (data) {
+        d3.dsv(",", "vis(2007-2016).csv", function (d) {
+            return d;
+        }).then(function (_d2) {
+
+            var root1 = d3.stratify()
+                .id(function (d) {
+                    return d.d.imageID;
+                })
+                .parentId(function (d) {
+                    return d.d.paperID;
+                })
+                (data);
+            // console.log(root1);
+            var root = d3.hierarchy(root1)
+                .sum(function (d) {
+                    return d.data.d.size;
+                })
+                .sort(function (a, b) {
+                    return b.value - a.value;
+                });
+            // __tmp = {"T01":0,"T02":0,"T03":0,"T04":0,"T05":0,"T06":0,"T07":0,"T08":0,"T09":0,"T10":0,"T11":0,"T12":0,"T13":0,"T14":0,"T15":0,"T16":0,"T17":0};
+            //
+            //     for(var i in root.children){
+            //         // console.log(root.children[i].children[0].data.id);
+            //         var _x = root.children[i].children[0].data.id.substr(-7).substr(0,3);
+            //         __tmp[_x] = __tmp[_x] +1;
+            //     }
+            //     console.log(__tmp);
+            var _au = {};
+            for (var i in _d2) {
+                // console.log(_d2[i]);
+                if (_d2[i]['Author Keywords']) {
+                    var _s2 = _d2[i]['Author Keywords'];
+                    _arr2 = _s2.split(',');
+                    // console.log(_arr2);
+                    for (var j in _arr2) {
+
+                        var _arr3 = _arr2[j].split(';');
+                        for (var k in _arr3) {
+                            // console.log(_arr3);
+                            // console.log(_arr3[k]);
+                            var _l = _arr3[k].toLocaleLowerCase().replace(/(^\s*)|(\s*$)/g, "");
+                            if (_au[_l] == undefined) _au[_l] = 1;
+                            else _au[_l] = _au[_l] + 1;
+                        }
+
+
+                    }
+                }
+
+            }
+
+            function sortNum(a, b) {
+                return b.num - a.num
+            }
+
+            // console.log(_au);
+
+            _da = [];
+            for (var i in _au) {
+                var _t2 = {};
+                _t2['name'] = i;
+                _t2['num'] = _au[i];
+                _da.push(_t2);
+                // console.log(_au[i]);
+            }
+            _da = _da.sort(sortNum);
+            console.log(_da);
+            var _div = d3.select('#_C').selectAll('div').data(_da).enter()
+                .append('div').style('box-sizing', 'content-box')
+                .style('display', 'inline-block')
+                .style('padding-right', '12px')
+                .style('margin', '1px')
+                .on('mouseout', function (d) {
+                    if (d.click != 1) $(this).css('background', '')
+                })
+                .on('click', function (d) {
+                    var _s = $(this).children('span').get(0).innerHTML;
+                    if (_s == 'SciVis') _s = 'Vis';
+                    if (d.click != 1) {
+                        $(this).css('background', '#888888');
+                        d.click = 1;
+                        draw('Author Keywords', _s);
+                    }
+                    else if (d.click == 1) {
+                        $(this).css('background', '#888888');
+                        d.click = 0;
+                        del('Author Keywords', _s);
+                    }
+
+                    console.log(_s);
+
+                })
+                .on('mouseover', function (d) {
+                    if (d.click != 1) $(this).css('background', '#C0C0C0')
+                });
+
+            _div.append('span').style('color', '#88AAA9').text(function (d) {
+                return d.name;
+            }).style('font-size', '15px');
+            _div.append('span').text(function (d) {
+                return d.num;
+            })
+                .style('font-size', '8pt').style('top', '2px').style('left', '1px').style('position', 'relative');
+            var _au = {};
+            for (var i in _d2) {
+                // console.log(_d2[i]);
+                if (_d2[i]['Author Names']) {
+                    var _s2 = _d2[i]['Author Names'];
+                    _arr2 = _s2.split(';');
+                    // console.log(_arr2);
+                    for (var j in _arr2) {
+                        if (_au[_arr2[j]] == undefined) _au[_arr2[j]] = 1;
+                        else _au[_arr2[j]] = _au[_arr2[j]] + 1;
+                    }
+                }
+
+            }
+
+            function sortNum(a, b) {
+                return b.num - a.num
+            }
+
+            // console.log(_au);
+
+            _da = [];
+            for (var i in _au) {
+                var _t2 = {};
+                _t2['name'] = i;
+                _t2['num'] = _au[i];
+                _da.push(_t2);
+                // console.log(_au[i]);
+            }
+            _da = _da.sort(sortNum);
+            // console.log(_da);
+            var _div = d3.select('#_A').selectAll('div').data(_da).enter()
+                .append('div').style('box-sizing', 'content-box')
+                .style('display', 'inline-block')
+                .style('padding-right', '12px')
+                .style('margin', '1px')
+                .on('mouseout', function (d) {
+                    if (d.click != 1) $(this).css('background', '')
+                })
+                .on('click', function (d) {
+                    var _s = $(this).children('span').get(0).innerHTML;
+                    if (_s == 'SciVis') _s = 'Vis';
+                    if (d.click != 1) {
+                        $(this).css('background', '#888888');
+                        d.click = 1;
+                        draw('Author Names', _s);
+                    }
+                    else if (d.click == 1) {
+                        $(this).css('background', '#888888');
+                        d.click = 0;
+                        del('Author Names', _s);
+                    }
+
+                    console.log(_s);
+
+                })
+                .on('mouseover', function (d) {
+                    if (d.click != 1) $(this).css('background', '#C0C0C0')
+                });
+
+            _div.append('span').style('color', '#88AAA9').text(function (d) {
+                return d.name;
+            }).style('font-size', '15px');
+            _div.append('span').text(function (d) {
+                return d.num;
+            })
+                .style('font-size', '8pt').style('top', '2px').style('left', '1px').style('position', 'relative');
+
+            _da = [{name: 'SciVis', num: 427}, {name: 'InfoVis', num: 373}, {name: 'VAST', num: 329}];
+
+            var _div = d3.select('#_B').selectAll('div').data(_da).enter()
+                .append('div').style('box-sizing', 'content-box')
+                .style('display', 'inline-block')
+                .style('padding-right', '12px')
+                .style('margin', '1px')
+                .on('mouseout', function (d) {
+                    if (d.click != 1) $(this).css('background', '')
+                })
+                .on('click', function (d) {
+                    var _s = $(this).children('span').get(0).innerHTML;
+                    if (_s == 'SciVis') _s = 'Vis';
+                    if (d.click != 1) {
+                        $(this).css('background', '#888888');
+                        d.click = 1;
+                        draw('Conference', _s);
+                    }
+                    else if (d.click == 1) {
+                        $(this).css('background', '#888888');
+                        d.click = 0;
+                        del('Conference', _s);
+                    }
+
+                    console.log(_s);
+
+                })
+                .on('mouseover', function (d) {
+                    if (d.click != 1) $(this).css('background', '#C0C0C0')
+                });
+
+            _div.append('span').style('color', '#88AAA9').text(function (d) {
+                return d.name;
+            }).style('font-size', '15px');
+            _div.append('span').text(function (d) {
+                return d.num;
+            })
+                .style('font-size', '8pt').style('top', '2px').style('left', '1px').style('position', 'relative');
+
+            _da = [{name: 'T01', num: 244}, {name: 'T02', num: 46}, {name: 'T03', num: 46}, {
+                name: 'T04',
+                num: 117
+            }, {name: 'T05', num: 56}, {name: 'T06', num: 79}, {name: 'T07', num: 11}, {
+                name: 'T08',
+                num: 55
+            }, {name: 'T09', num: 11},
+                {name: 'T10', num: 30}, {name: 'T11', num: 49}, {name: 'T12', num: 22}, {
+                    name: 'T13',
+                    num: 24
+                }, {name: 'T14', num: 7}, {name: 'T15', num: 63}, {name: 'T16', num: 112}];
+
+            var _div = d3.select('#_D').selectAll('div').data(_da).enter()
+                .append('div').style('box-sizing', 'content-box')
+                .style('display', 'inline-block')
+                .style('padding-right', '12px')
+                .style('margin', '1px')
+                .on('mouseout', function (d) {
+                    if (d.click != 1) $(this).css('background', '')
+                })
+                .on('click', function (d) {
+                    var _s = $(this).children('span').get(0).innerHTML;
+                    if (_s == 'SciVis') _s = 'Vis';
+                    if (d.click != 1) {
+                        $(this).css('background', '#888888');
+                        d.click = 1;
+                        draw('TID', _s);
+                    }
+                    else if (d.click == 1) {
+                        $(this).css('background', '#888888');
+                        d.click = 0;
+                        del('TID', _s);
+                    }
+
+                    console.log(_s);
+
+                })
+                .on('mouseover', function (d) {
+                    if (d.click != 1) $(this).css('background', '#C0C0C0')
+                });
+
+            _div.append('span').style('color', '#88AAA9').text(function (d) {
+                return d.name;
+            }).style('font-size', '15px');
+            _div.append('span').text(function (d) {
+                return d.num;
+            })
+                .style('font-size', '8pt').style('top', '2px').style('left', '1px').style('position', 'relative');
+            var svg = d3.select('svg');
+            // var data = {
+            //     "name": "A1",
+            //
+            //             "name": "B1",
+            //             "children": [
+            //                 {
+            //                     "name": "C1",
+            //                     "value": 100
+            //                 },
+            //                 {
+            //                     "name": "C2",
+            //                     "value": 300
+            //                 },
+            //                 {
+            //                     "name": "C3",
+            //                     "value": 200
+            //                 }
+            //             ]
+            //
+            // }
+            //
+            // var root = d3.hierarchy(data)
+            // var treemapLayout = d3.treemap().tile(d3.treemapDice);
+            // treemapLayout
+            //     .size([400, 50])
+            //     .paddingOuter(0);
+            // root.sum(function(d) {
+            //     return d.value;
+            // }).sort(function(a, b) { return b.height - a.height || b.value - a.value; });
+            // treemapLayout(root);
+            // // console.log(root);
+            // svg.selectAll('rect')
+            //     .data(root.descendants())
+            //     .enter()
+            //     .append('rect')
+            //     .attr('x', function(d) { return d.x0; })
+            //     .attr('y', function(d) { return d.y0; })
+            //     .attr('width', function(d) { return d.x1 - d.x0; })
+            //     .attr('height', function(d) { return d.y1 - d.y0; });
+            // draw();
+            var selection = [];
+            var selection = root.children;
+            console.log(selection);
+            var selection_A = [];
+            var selection_V = [];
+            var selection_K = [];
+            var selection_T = [];
+
+
+            function del(_type, _s){
+                if (_type == 'TID') {
+                    for (var i in root.children) {
+                        // console.log(root.children[i].children[0].data.id);
+                        var _x = root.children[i].children[0].data.id.substr(-7).substr(0, 3);
+                        if (_x == _s) {
+                            var index = selection_T.indexOf(root.children[i]);
+                            selection_T.splice(index, 1);
+
+                        }
+                    }
+
+
+
+                }
+                else if (_type == 'Author Keywords') {
+                    for (var j in root.children) {
+                        var _id = root.children[j].data.id.replace('@', '/');
+                        for (var i in _d2) {
+                            if (_d2[i][_type]){
+                                if( _d2[i]['Paper DOI'] == _id) {
+                                    var _origi_key = _d2[i][_type];
+                                    _arr2 = _origi_key.split(',');
+                                    // console.log(_arr2);
+                                    for (var jj in _arr2) {
+
+                                        var _arr3 = _arr2[jj].split(';');
+                                        for (var k in _arr3) {
+                                            var _l = _arr3[k].toLocaleLowerCase().replace(/(^\s*)|(\s*$)/g, "");
+                                            if (_l == _s) {
+                                                var index = selection_K.indexOf(root.children[j]);
+                                                selection_K.splice(index, 1);
+                                            }
+                                        }
+
+
+                                    }
+
+                                    // console.log(root.children[j]);
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+                else if(_type == 'Conference'){
+                    for (var j in root.children) {
+                        var _id = root.children[j].data.id.replace('@', '/');
+
+                        for (var i in _d2) {
+                            // console.log(root.children[j]);
+                            // console.log(_d2[i][_type]);
+                            if (_d2[i][_type] && _d2[i]['Paper DOI'] == _id  && _d2[i][_type].indexOf(_s) != -1) {
+                                var index = selection_V.indexOf(root.children[j]);
+                                selection_V.splice(index, 1);
+
+                                // console.log(root.children[j]);
+                            }
+
+                        }
+
+                    }
+
+                }else {
+                    for (var j in root.children) {
+                        var _id = root.children[j].data.id.replace('@', '/');
+
+                        for (var i in _d2) {
+                            // console.log(root.children[j]);
+                            // console.log(_d2[i][_type]);
+                            if (_d2[i][_type] && _d2[i]['Paper DOI'] == _id  && _d2[i][_type].indexOf(_s) != -1) {
+                                var index = selection_A.indexOf(root.children[j]);
+                                selection_A.splice(index, 1);
+
+                                // console.log(root.children[j]);
+                            }
+
+                        }
+
+                    }
+                }
+                _draw();
+
+            }
+
+            function draw(_type, _s) {
+
+                console.log(_type, _s);
+
+
+
+                // console.log(_d2);
+
+                // var _k = 0, _n1 = 0, _n2 = 0, _n3 = 0;
+                if (_type == 'TID') {
+                    for (var i in root.children) {
+                        // console.log(root.children[i].children[0].data.id);
+                        var _x = root.children[i].children[0].data.id.substr(-7).substr(0, 3);
+                        if (_x == _s) {
+                            if($.inArray(root.children[i], selection_T)<0)
+                                selection_T.push(root.children[i]);
+                        }
+                    }
+                    console.log("===================");
+                    console.log(selection);
+                    console.log(selection_T);
+
+                    // var _sele = [];
+                    //
+                    //     for(var j in selection_T)
+                    //     if($.inArray(selection_T[j], selection)>0){
+                    //
+                    //             _sele.push(selection_T[j]);
+                    //     }
+                    //
+                    // selection=_sele;
+                    // console.log(_sele);
+
+                }
+                else if (_type == 'Author Keywords') {
+                    for (var j in root.children) {
+                        var _id = root.children[j].data.id.replace('@', '/');
+                        for (var i in _d2) {
+                            if (_d2[i][_type]){
+                                if( _d2[i]['Paper DOI'] == _id) {
+                                    var _origi_key = _d2[i][_type];
+                                    _arr2 = _origi_key.split(',');
+                                    // console.log(_arr2);
+                                    for (var jj in _arr2) {
+
+                                        var _arr3 = _arr2[jj].split(';');
+                                        for (var k in _arr3) {
+                                            var _l = _arr3[k].toLocaleLowerCase().replace(/(^\s*)|(\s*$)/g, "");
+                                            if (_l == _s)
+                                                if($.inArray(root.children[j], selection_K)<0)
+                                                    selection_K.push(root.children[j]);
+                                        }
+
+
+                                    }
+
+                                    // console.log(root.children[j]);
+                                }
+                            }
+
+                        }
+
+                    }
+                    // var _sele = [];
+                    //
+                    // for(var j in selection_K)
+                    //     if($.inArray(selection_K[j], selection)>0){
+                    //
+                    //         _sele.push(selection_K[j]);
+                    //     }
+                    //
+                    // selection=_sele;
+                    // console.log(_sele);
+                }
+                else if(_type == 'Conference'){
+                    for (var j in root.children) {
+                        var _id = root.children[j].data.id.replace('@', '/');
+
+                        for (var i in _d2) {
+                            // console.log(root.children[j]);
+                            // console.log(_d2[i][_type]);
+                            if (_d2[i][_type] && _d2[i]['Paper DOI'] == _id  && _d2[i][_type].indexOf(_s) != -1) {
+                                if($.inArray(root.children[j], selection_V)<0){
+                                    if(_type == 'Conference')
+                                        selection_V.push(root.children[j]);
+                                }
+
+                                // console.log(root.children[j]);
+                            }
+
+                        }
+
+                    }
+                    // var _sele = [];
+                    //
+                    // for(var j in selection_V)
+                    //     if($.inArray(selection_V[j], selection)>0){
+                    //
+                    //         _sele.push(selection_V[j]);
+                    //     }
+                    //
+                    // selection=_sele;
+                    // console.log(_sele);
+                }else {
+                    for (var j in root.children) {
+                        var _id = root.children[j].data.id.replace('@', '/');
+
+                        for (var i in _d2) {
+                            // console.log(root.children[j]);
+                            // console.log(_d2[i][_type]);
+                            if (_d2[i][_type] && _d2[i]['Paper DOI'] == _id  && _d2[i][_type].indexOf(_s) != -1) {
+                                if($.inArray(root.children[j], selection_A)<0){
+                                    // if(_type == 'Conference')
+                                        selection_A.push(root.children[j]);
+                                }
+
+                                // console.log(root.children[j]);
+                            }
+
+                        }
+
+                    }
+                    // var _sele = [];
+                    //
+                    // for(var j in selection_A)
+                    //     if($.inArray(selection_A[j], selection)>0){
+                    //
+                    //         _sele.push(selection_A[j]);
+                    //     }
+                    //
+                    // selection=_sele;
+                    // console.log(_sele);
+                }
+                _draw();
+
+
+            }
+            function _draw(){
+                svg.selectAll('*').data([]).exit().remove();
+
+                // console.log(data);
+
+                // console.log(root.children);
+
+
+                var _sele = [];
+                console.log(selection_A,selection_V,selection_K,selection_T);
+
+                for(var i in  root.children){
+                    // if((selection_K.length==0||$.inArray(root.children[i], selection_K)>=0)) console.log('k ------');
+                    if((selection_A.length==0||$.inArray(root.children[i], selection_A)>=0)&& (selection_V.length==0||$.inArray(root.children[i], selection_V)>=0)&&(selection_K.length==0||$.inArray(root.children[i], selection_K)>=0) && (selection_T.length==0||$.inArray(root.children[i], selection_T)>=0) ) {
+                        _sele.push(root.children[i]);
+                    }
+                }
+                if(selection_A.length==0&&selection_V.length==0&&selection_K.length==0&&selection_T.length==0) _sele=[];
+                selection= _sele;
+                console.log(_sele);
+                // selection.splice(0, 1);
+                function sortValue(a, b) {
+                    return b.value - a.value;
+                }
+
+                selection.sort(sortValue);
+                console.log(selection);
+                var x = d3.scaleLinear()
+                    .range([0, (selection.length - 1) * 50]);
+                x.domain([0, (selection.length - 1)]);
+                $('#svg-container').css('height', selection.length * 50 );
+
+                var y = d3.scaleLinear()
+                    .range([0, 900]);
+                y.domain([0, 74357940]);
+                // if(selection.length){
+                //     var xAxis = d3.axisLeft(x).ticks(selection.length).tickSize(5).tickFormat(d3.format(".0f"));
+                //     svg.append('g').attr('class', 'x axis')
+                //         .attr("transform", "translate(80," + (50) + ")").style("font-size", "10px").attr('opacity', '1').attr('color', 'black')
+                //         .call(xAxis);
+                // }
+
+                var _bar = svg.append('g').attr('class', 'bar chart')
+                    .attr("transform", "translate(80," + (50) + ")");
+                _bar.selectAll('rect').data(selection).enter().append('rect')
+                    .attr('x', function (d, i) {
+                        return 0;
+                    })
+                    .attr('y', function (d, i) {
+                        return i * 50;
+                    })
+                    .attr('width', function (d, i) {
+                        var _root = d3.hierarchy(d)
+                        // console.log(_root);
+                        var treemapLayout = d3.treemap().tile(d3.treemapDice);
+                        treemapLayout
+                            .size([y(d.value), 30])
+                            .paddingOuter(0);
+                        _root.sort(function (a, b) {
+                            return b.height - a.height || b.value - a.value;
+                        });
+                        treemapLayout(_root);
+                        // console.log(root);
+                        _bar.append('g')
+                            .selectAll('rect')
+                            .data(_root.descendants())
+                            .enter()
+                            .append('rect')
+                            .attr('x', function (dd) {
+                                return dd.x0;
+                            })
+                            .attr('y', function (dd) {
+                                return dd.y0 + 50 * i;
+                            })
+                            .attr('width', function (dd) {
+                                return dd.x1 - dd.x0;
+                            })
+                            .attr('height', function (dd) {
+                                return dd.y1 - dd.y0;
+                            })
+                            .style('fill', function (d) {
+                                return "rgba(" + colorload_data[d.data.data.id] + ")"
+                            })
+                            .on('click', function (d) {
+                                console.log(d.parent.data.data.id);
+                                for(var i in _d2){
+                                    if(_d2[i]['Paper DOI']&&_d2[i]['Paper DOI'].replace('/','@')==d.parent.data.data.id)
+                                        console.log(_d2[i]);
+                                }
+                            });
+                        return y(d.value);
+                    })
+                    .attr('height', '30');
+            }
+        })
+    });
+</script>
+</body>
+</html>
